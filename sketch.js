@@ -6,7 +6,9 @@ var circleN1;
 var currmove;
 var pmousePressed = false;
 var nmousePressed = false;
-
+var stack = [];
+var maxiterations = 10000;
+var minsize = 2;
 function setup() {
 	createCanvas(600,600);
 	reset();
@@ -31,7 +33,45 @@ function draw() {
 	let newCurvature1 = getCurvature(circleA,circleB,circleC,1);
 	let newCoord1 = getCoord(circleA,circleB,circleC,newCurvature1,1);
 	circleN1 = new Circle(newCoord1[0],newCoord1[1],(1/newCurvature1));
+
 	circleN1.display();
+  stack = [];
+  let iter = 0;
+  circleN2 = new Descartes(circleA,circleB,circleC,circleN1).newCircle;
+  stack.push(new Descartes(circleA,circleB,circleC,circleN1));
+  stack.push(new Descartes(circleA,circleB,circleC,circleN2));
+
+  while(stack.length > 0 && iter < maxiterations){
+    let d = stack.shift();
+    // console.log("hey");
+    let nc = d.newCircle;
+    // console.log("newcircle r: "+ nc.rad);
+    nc.display();
+    if (abs(nc.rad)>=minsize){
+      stack.push(new Descartes(d.c1,d.c2,nc,d.c3));
+      stack.push(new Descartes(d.c2,d.c3,nc,d.c1));
+      stack.push(new Descartes(d.c3,d.c1,nc,d.c2));
+
+
+      // stack.push(new Descartes(circleB,circleA,nc,circleC));
+      //
+      // stack.push(new Descartes(circleB,circleC,nc,circleA));
+      // stack.push(new Descartes(circleC,circleB,nc,circleA));
+      // stack.push(new Descartes(circleA,circleC,nc,circleB));
+      // stack.push(new Descartes(circleC,circleA,nc,circleB));
+
+      // stack.push(new Descartes(circleB,circleA,nc,circleC));
+
+      // stack.push(new Descartes(circleB,circleC,nc,circleA));
+      // stack.push(new Descartes(circleC,circleA,nc,circleB));
+
+
+      // stack.push(new Descartes(circleA,circleB,nc,circleC))
+
+    }
+    iter++;
+  }
+
   // newCurvature1 = getCurvature(circleA,circleB,circleC,1);
 	// newCoord1 = getCoord(circleA,circleB,circleC,newCurvature1,1);
 	// let newCircle2 = new Circle(newCoord1[0],newCoord1[1],(1/newCurvature1));
